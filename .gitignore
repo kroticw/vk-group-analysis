@@ -161,5 +161,4 @@ cython_debug/
 
 #files
 config.yaml
-users.csv
-walls.csv
+/csv

@@ -31,7 +31,7 @@ def get_posts(group_id):
 
 
 def get_walls(group_id, posts_df_header):
-    with open('walls.csv', 'w', newline='', encoding='utf-8') as file:
+    with open(f'{group_id}_walls.csv', 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(posts_df_header)
         

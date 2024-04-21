@@ -23,7 +23,7 @@ def get_members(group_id):
 
 
 def get_users(group_id, users_df_header):
-    with open('users.csv', 'w', newline='', encoding='utf-8') as file:
+    with open(f'{group_id}_users.csv', 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(users_df_header)
 
