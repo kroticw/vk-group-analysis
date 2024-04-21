@@ -2,25 +2,12 @@ import csv
 import datetime
 from numpy import NaN
 import requests
-import yaml
-from yaml import load
 import pandas as pd
 
-with open('config.yaml', 'r') as f:
-    config = load(f, Loader=yaml.FullLoader)
 
-
-class cfg():
-    token = config['token']
-    id = config['app_id']
-    vk_url = config['vk_url']
-    vk_version = config['vk_version']
-    user_id = config['user_id']
-
-
-def get_posts(group_id):
-    params = {'access_token': cfg.token, 'domain': group_id, 'v': 5.131}
-    r = requests.get('https://api.vk.com/method/wall.get', params=params)
+def get_posts(group_id, conf):
+    params = {'access_token': conf.token, 'domain': group_id, 'v': conf.vk_version}
+    r = requests.get(f'{conf.vk_url}/method/wall.get', params=params)
     count = r.json()['response']['count']
     print(f'Количество публикаций в сообществе: {count}')
     if count > 100:
@@ -30,15 +17,15 @@ def get_posts(group_id):
         return count
 
 
-def get_walls(group_id, posts_df_header):
-    with open(f'{group_id}_walls.csv', 'w', newline='', encoding='utf-8') as file:
+def get_walls(group_id, posts_df_header, conf):
+    with open(f'csv/{group_id}_walls.csv', 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(posts_df_header)
         
-        for offset in range(0, get_posts(group_id) + 1):
+        for offset in range(0, get_posts(group_id, conf) + 1):
             print("offset: ", offset)
-            params = {'access_token': cfg.token, 'domain': group_id, 'v': 5.131, 'offset': offset * 100}
-            posts = requests.get('https://api.vk.com/method/wall.get', params=params).json()['response']
+            params = {'access_token': conf.token, 'domain': group_id, 'v': conf.vk_version, 'offset': offset * 100}
+            posts = requests.get(f'{conf.vk_url}/method/wall.get', params=params).json()['response']
 
             for post in posts['items']:
                 record = [post['id'], post.get('text'),
